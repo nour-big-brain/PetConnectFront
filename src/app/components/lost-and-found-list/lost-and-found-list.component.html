@@ -1,0 +1,25 @@
+<div class="lost-and-found-list">
+    <h1>Lost and Found</h1>
+    @if(lostAndFoundPosts.length === 0) {
+      <div class="no-posts">
+        <p>No Lost and Found posts available at the moment. Check back later!</p>
+      </div>
+    }
+    @for(post of lostAndFoundPosts; track $index) {
+      <div class="post-card">
+        <img [src]="'data:image/jpeg;base64,' + post.image" alt="Pet Image" class="pet-image" />
+        <div class="post-details">
+          <h2>{{ post.title }}</h2>
+          <p><strong>Pet Name:</strong> {{ post.pet.name }}</p>
+          <p><strong>Status:</strong> {{ post.status }}</p>
+          <p><strong>Location:</strong> {{ post.location }}</p>
+          <p><strong>Description:</strong> {{ post.description }}</p>
+          @if(post.status === 'LOST'&& post.id ) {
+            <button (click)="markAsFound(post.id)" class="found-btn">Mark as Found</button>
+          }
+          @if(post.id){
+          <button (click)="deletePost(post.id)" class="delete-btn">Delete</button>
+        }</div>
+      </div>
+    }
+  </div>

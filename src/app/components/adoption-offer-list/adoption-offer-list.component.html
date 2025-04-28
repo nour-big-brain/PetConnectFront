@@ -1,0 +1,25 @@
+<div class="adoption-offer-list">
+    <h1>Adoption Offers</h1>
+    @if(adoptionOffers.length === 0){
+    <div  class="no-offers">
+      <p>No adoption offers available at the moment. Check back later!</p>
+    </div>}
+    @for (offer of adoptionOffers; track $index) {
+    <div  class="offer-card">
+      <img [src]="'data:image/jpeg;base64,' " alt="Pet Image" class="pet-image" />
+      <div class="offer-details">
+        <h2>{{ offer.pet.name }}</h2>
+        <p><strong>Age:</strong> {{ offer.pet.age }} years</p>
+        <p><strong>Breed:</strong> {{ offer.pet.breed }}</p>
+        <p><strong>Sex:</strong> {{ offer.pet.sex }}</p>
+        <p><strong>Description:</strong> {{ offer.pet.description }}</p>
+        <p><strong>Location:</strong> {{ offer.location }}</p>
+        <p><strong>Status:</strong> {{ offer.status }}</p>
+        <div class="offer-actions">
+            @if(offer.id){
+          <button (click)="markAsAdopted(offer.id)" class="adopt-btn">Mark as Adopted</button>
+          <button (click)="deleteOffer(offer.id)" class="delete-btn">Delete</button>}
+        </div>
+      </div>
+    </div>}
+  </div>

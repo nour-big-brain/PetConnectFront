@@ -1,0 +1,24 @@
+<div class="product-list">
+    <h1>Products</h1>
+    @if(products.length === 0) {
+      <div class="no-products">
+        <p>No products available at the moment. Check back later!</p>
+      </div>
+    }
+    @for(product of products; track $index) {
+      <div class="product-card">
+        <img [src]="'data:image/jpeg;base64,' + product.image" alt="Product Image" class="product-image" />
+        <div class="product-details">
+          <h2>{{ product.title }}</h2>
+          <p><strong>Price:</strong> ${{ product.price }}</p>
+          <p><strong>Status:</strong> {{ product.status }}</p>
+          <p><strong>Location:</strong> {{ product.location }}</p>
+          <p><strong>Description:</strong> {{ product.description }}</p>
+          @if(product.status === 'AVAILABLE' && product.id) {
+            <button (click)="markAsSold(product.id)" class="sold-btn">Mark as Sold</button>
+          }
+           
+        </div>
+      </div>
+    }
+  </div>

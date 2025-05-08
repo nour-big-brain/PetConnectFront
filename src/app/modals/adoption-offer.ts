@@ -5,6 +5,7 @@ export interface AdoptionOffer {
     title: string;
     location: string;
     status: string;
+    petId?: number;
     pet: {
       id: number;
       name: string;

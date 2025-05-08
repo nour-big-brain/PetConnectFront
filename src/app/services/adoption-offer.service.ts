@@ -2,16 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AdoptionOffer } from '../modals/adoption-offer';
 import { Observable } from 'rxjs';
+import { Pet } from '../modals/pet';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdoptionOfferService {
 
-  private apiUrl = '/adoption-offers';
+  private apiUrl = 'http://localhost:8087/adoption-offers';
+  private apiUrl2 = 'http://localhost:8087';
 
   constructor(private http: HttpClient) {}
-
+  getPetById(id: number): Observable<Pet> {
+    return this.http.get<Pet>(`${this.apiUrl2}/pets/${id}`);
+}
   getAllOffers(): Observable<AdoptionOffer[]> {
     return this.http.get<AdoptionOffer[]>(this.apiUrl);
   }

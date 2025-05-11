@@ -1,6 +1,6 @@
 <nav class="navbar bg-gray-50" >
     <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-      <div class="flex items-center">
+      <div class="flex items-center" routerLink="/home">
         <img src="/ressources/logo.jpeg" alt="Pawsitively Logo" class="h-10 mr-2">
         <span class="text-xl font-bold text-purple-600">PetConnect</span>
       </div>
@@ -9,11 +9,11 @@
         <a routerLink="/lostandfoundList" class="text-gray-600 hover:text-purple-600">Lost & found</a>
         <a routerLink="/adoption-offers" class="text-gray-600 hover:text-purple-600">Adopt a pet</a>
         <a routerLink="/marketplace" class="text-gray-600 hover:text-purple-600">Marketplace</a>
+        <a routerLink="/vet" class="text-gray-600 hover:text-purple-600">Our Vets</a>
 
-        <a href="#blog" class="text-gray-600 hover:text-purple-600">Blog</a>
-        <a href="#contact" class="text-gray-600 hover:text-purple-600">Contact</a>
+
       </div>
-      <button class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700">
+      <button class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700" routerLink="/signup">
         Sign In
       </button>
     </div>

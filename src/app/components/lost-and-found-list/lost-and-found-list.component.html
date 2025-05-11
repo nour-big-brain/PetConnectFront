@@ -14,7 +14,7 @@
             <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" class="w-full text-gray-700 focus:outline-none" placeholder="Search by title...">
+            <input type="text" class="w-full text-gray-700 focus:outline-none" placeholder="Search by title..." [(ngModel)]="search.titleKeyword" (keyup.enter)="applySearch()">
           </div>
           <button (click)="openPostModal()" class="bg-pink-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-pink-600 transition-colors flex items-center text-lg font-bold">
             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,130 +24,240 @@
           </button>
         </div>
       </div>
+<!-- Filters -->
+<div class="bg-white rounded-xl shadow-md p-6 mb-8">
+  <h3 class="text-lg font-bold text-purple-600 mb-4">Find Lost or Found Pets</h3>
 
-      <!-- Filters -->
-      <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-        <h3 class="text-lg font-bold text-purple-600 mb-4">Find Lost or Found Pets</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label class="text-gray-700 font-semibold block mb-2">Title</label>
-            <input class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Search by title...">
-          </div>
-          <div>
-            <label class="text-gray-700 font-semibold block mb-2">Date</label>
-            <input type="date" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500">
-          </div>
-          <div>
-            <label class="text-gray-700 font-semibold block mb-2">Location</label>
-            <input class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter location...">
-          </div>
+  <!-- Location Filter -->
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Location</label>
+      <input [(ngModel)]="filters.location" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter location...">
+    </div>
+
+  <!-- Pet Info Filters -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Pet Name</label>
+      <input [(ngModel)]="filters.petName" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter pet name...">
+    </div>
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Breed</label>
+      <input [(ngModel)]="filters.breed" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Enter breed...">
+    </div>
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Sex</label>
+      <select [(ngModel)]="filters.sex" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500">
+        <option value="">Any</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Age Filters -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Min Age</label>
+      <input type="number" min="0" [(ngModel)]="filters.minAge" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="e.g. 1">
+    </div>
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Max Age</label>
+      <input type="number" min="0" [(ngModel)]="filters.maxAge" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="e.g. 10">
+    </div>
+  </div>
+
+  <!-- Date Filters -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">Start Date</label>
+      <input type="date" [(ngModel)]="filters.startDate" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500">
+    </div>
+    <div>
+      <label class="text-gray-700 font-semibold block mb-2">End Date</label>
+      <input type="date" [(ngModel)]="filters.endDate" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-pink-500">
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="mt-6 flex gap-4 justify-start">
+    <button (click)="applyFilters()" class="bg-purple-600 text-white px-6 py-3 rounded-full hover:bg-purple-700 transition-colors flex items-center text-lg">
+      Apply Filters
+    </button>
+    <button (click)="resetFilters()" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-full hover:bg-gray-300 transition-colors text-lg">
+      Reset
+    </button>
+  </div>
+</div>
+
+   <!-- Lost & Found Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  @if(filteredPosts.length === 0) {
+    <div class="col-span-full text-center py-12 bg-white rounded-xl shadow-md">
+      <p class="text-gray-600 text-lg">No lost or found posts available.</p>
+    </div>
+  }
+  
+  @for (post of lostAndFoundPosts; track $index) {
+    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+      <div class="relative">
+        @if(post.image) {
+          <img [src]="'data:image/jpeg;base64,' + post.image" alt="{{ post.title }}"
+            class="w-full h-48 object-cover object-center" />
+        }
+        <div class="absolute top-3 right-3 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+          {{ post.status }}
         </div>
-        <div class="mt-6 flex flex-wrap gap-4">
-          <button (click)="applyFilters()" class="bg-purple-600 text-white px-5 py-2 rounded-full hover:bg-purple-700 transition-colors flex items-center">
-            Apply Filters
-          </button>
-          <button (click)="resetFilters()" class="bg-gray-200 text-gray-700 px-5 py-2 rounded-full hover:bg-gray-300 transition-colors">
-            Reset
-          </button>
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+          <h2 class="text-xl font-bold text-white">{{ post.title }}</h2>
         </div>
       </div>
+      <div class="p-5">
+        <div class="text-gray-500 text-sm mb-2">
+          📅 {{ post.date }} — 📍 {{ post.location }}
+        </div>
+        <div class="flex gap-2">
+          @if (post.id) {
+          <button (click)="showPetDetails(post.id)" class="view-more-btn bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 transition-colors flex-1 flex items-center justify-center">
+            View More
+          </button>}
+        </div>
+      </div>
+    </div>
+  }
+</div>
 
-      <!-- Card View -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngIf="filteredPosts.length === 0" class="col-span-full text-center py-12 bg-white rounded-xl shadow-md">
-          <p class="text-gray-600 text-lg">No lost or found posts available.</p>
+<!-- 🧩 Modal moved OUTSIDE the loop -->
+@if(openPetId){
+  <div class="fixed inset-0 z-50 overflow-y-auto bg-white">
+    <div class="sticky top-0 z-10 bg-white shadow-sm">
+      <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <h2 class="text-xl font-semibold">Lost & Found Details</h2>
+        <button (click)="closePetDetails()" class="text-gray-500 hover:text-gray-800">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex flex-col lg:flex-row gap-12">
+        <div class="w-full lg:w-1/2">
+          <div class="mb-6 bg-gray-50 rounded-2xl p-8 flex items-center justify-center">
+            <img [src]="'data:image/jpeg;base64,' + openPetId.image" alt="{{ openPetId.title }}" class="max-h-96 object-contain" />
+          </div>
         </div>
 
-        <div *ngFor="let post of filteredPosts" class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-          <div class="relative">
-            <img *ngIf="post.image" [src]="'data:image/jpeg;base64,' + post.image" alt="{{ post.title }}" class="w-full h-48 object-cover object-center" />
-            <div class="absolute top-3 right-3 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">{{ post.status }}</div>
-            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-              <h2 class="text-xl font-bold text-white">{{ post.title }}</h2>
-            </div>
+        <div class="w-full lg:w-1/2">
+          <div class="flex justify-between items-center mb-4">
+            <h1 class="text-3xl font-bold">{{ openPetId.title }}</h1>
+            <span class="bg-pink-500 text-white text-xs px-3 py-1 rounded-full">{{ openPetId.status }}</span>
           </div>
-          <div class="p-5">
-            <p class="text-gray-600 text-sm mb-3">{{ post.description }}</p>
-            <div class="text-gray-500 text-sm mb-2">
-              📅 {{ post.date }} — 📍 {{ post.location }}
+
+          <div class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Details</h3>
+            <p class="text-gray-600">📅 {{ openPetId.date }}</p>
+            <p class="text-gray-600">📍 {{ openPetId.location }}</p>
+          </div>
+          <div class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Description</h3>
+            <p class="text-gray-600">{{ openPetId.description }}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Phone Number Section with Icon -->
+            <div class="py-4 border border-blue-500 text-blue-500 font-medium rounded-xl bg-blue-50 flex items-center justify-center space-x-2">
+              <i class="fas fa-phone-alt text-lg"></i>
+              <span>{{ openPetId.user.phoneNumber }}</span>
             </div>
-            <div class="flex gap-2">
-              <button (click)="markAsFound(post.id!)" [disabled]="post.status === 'Found'" class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 flex-1">
-                {{ post.status === 'Found' ? 'Resolved' : 'Mark as Found' }}
-              </button>
-              <button (click)="deletePost(post.id!)" class="bg-gray-100 text-gray-700 p-2 rounded-full hover:bg-gray-200">
-                🗑️
-              </button>
-            </div>
+          
+            <!-- Go Back Button Section with Enhanced Styling -->
+            <button 
+              (click)="closePetDetails()" 
+              class="py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              Go Back
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
+}
 
+
+  </div>
+</div>
   <!-- Modal -->
   @if(showPostModal){
-    <div class="fixed inset-0 bg-gray-200/60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-0 flex overflow-hidden">
-        <!-- Left image -->
-        <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url('/ressources/half.jpg');"></div>
-    
-        <!-- Right form -->
-        <div class="w-full md:w-1/2 p-8">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-purple-600">Report Lost or Found Pet</h2>
-            <button (click)="closePostModal()" class="text-gray-500 hover:text-gray-700">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-    
-          <form [formGroup]="lostForm" (ngSubmit)="submitLostReport()" class="space-y-4">
-            <!-- Title + Status -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="title" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Title">
-              <select formControlName="status" class="bg-gray-100 rounded-lg px-4 py-2 w-full">
-                <option value="Lost">Lost</option>
-                <option value="Found">Found</option>
-              </select>
-            </div>
-    
-            <!-- Date + Location -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="date" type="date" class="bg-gray-100 rounded-lg px-4 py-2 w-full">
-              <input formControlName="location" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Location">
-            </div>
-    
-            <!-- Pet Name + Type -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="petName" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Pet Name">
-              <input formControlName="petBreed" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Breed">
-            </div>
-    
-            <!-- Age + Sex -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="petAge" type="number" min="0" max="20" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Age">
-              <input formControlName="petSex" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Sex">
-            </div>
-    
-            <!-- Description -->
-            <textarea formControlName="description" rows="3" class="w-full bg-gray-100 rounded-lg px-4 py-2" placeholder="Describe the pet or event..."></textarea>
-    
-            <!-- Upload Photo -->
-            <div>
-              <label class="block text-sm font-medium text-gray-600 mb-1">Upload Photo</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-pink-500 transition-colors">
-                <input type="file" accept="image/*" class="hidden" id="lostPhotoInput" (change)="onLostFileSelected($event)">
-                <label for="lostPhotoInput" class="cursor-pointer text-sm text-gray-400">Click to upload or drag image</label>
-              </div>
-            </div>
-    
-            <button type="submit" class="w-full bg-pink-500 text-white py-2 rounded-full font-semibold hover:bg-pink-600">Submit</button>
-          </form>
+  <div class="fixed inset-0 bg-gray-200/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-0 flex overflow-hidden">
+      <!-- Left image -->
+      <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url('/ressources/half.jpg');">
+      </div>
+
+      <!-- Right form -->
+      <div class="w-full md:w-1/2 p-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-purple-600">Report Lost or Found Pet</h2>
+          <button (click)="closePostModal()" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
+
+        <form [formGroup]="lostForm" (ngSubmit)="submitLostReport()" class="space-y-4">
+          <!-- Title + Status -->
+          <div class="grid grid-cols-2 gap-4">
+            <input formControlName="title" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+              placeholder="Title">
+            <select formControlName="status" class="bg-gray-100 rounded-lg px-4 py-2 w-full">
+              <option value="Lost">Lost</option>
+              <option value="Found">Found</option>
+            </select>
+          </div>
+
+          <!-- Date + Location -->
+          <div class="grid grid-cols-2 gap-4">
+            <input formControlName="date" type="date" class="bg-gray-100 rounded-lg px-4 py-2 w-full">
+            <input formControlName="location" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+              placeholder="Location">
+          </div>
+
+          <!-- Pet Name + Type -->
+          <div class="grid grid-cols-2 gap-4">
+            <input formControlName="petName" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+              placeholder="Pet Name">
+            <input formControlName="petBreed" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+              placeholder="Breed">
+          </div>
+
+          <!-- Age + Sex -->
+          <div class="grid grid-cols-2 gap-4">
+            <input formControlName="petAge" type="number" min="0" max="20"
+              class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Age">
+            <input formControlName="petSex" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+              placeholder="Sex">
+          </div>
+
+          <!-- Description -->
+          <textarea formControlName="description" rows="3" class="w-full bg-gray-100 rounded-lg px-4 py-2"
+            placeholder="Describe the pet or event..."></textarea>
+
+          <!-- Upload Photo -->
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Upload Photo</label>
+            <div
+              class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-pink-500 transition-colors">
+              <input type="file" accept="image/*" class="hidden" id="lostPhotoInput"
+                (change)="onLostFileSelected($event)">
+              <label for="lostPhotoInput" class="cursor-pointer text-sm text-gray-400">Click to upload or drag
+                image</label>
+            </div>
+          </div>
+
+          <button type="submit"
+            class="w-full bg-pink-500 text-white py-2 rounded-full font-semibold hover:bg-pink-600">Submit</button>
+        </form>
       </div>
     </div>
-    }
-</div>
-  
+  </div>
+  }

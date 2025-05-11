@@ -1,10 +1,8 @@
-export interface Product {
+import { Post } from "./post";
+import { User } from "./user";
+
+export interface Product extends Post{
   id?: number;
-  description: string;
-  date: string;
-  title: string;
-  location: string;
-  image:string;
   status: string;
   price : DoubleRange,
   }

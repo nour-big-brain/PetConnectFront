@@ -1,0 +1,69 @@
+<div class="overflow-hidden bg-gradient-to-b from-purple-100 to-white min-h-screen pt-12 pb-8">
+  <div class="container mx-auto px-4">
+
+    <div class="header">
+      <div class="title-container">
+        <div class="paw-print-icon">
+          <img src="/assets/logo.png" alt="Logo" class="w-12 h-12 rounded-full">
+        </div>
+        <h1>Manage Appointments</h1>
+      </div>
+    </div>
+    
+
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="text-lg font-bold text-purple-600 mb-4">Your Appointments</h3>
+
+      <!-- calender -->
+
+
+      @if (appointments.length > 0) {
+        <table class="min-w-full table-auto">
+          <thead>
+            <tr style="background-color:rgb(251, 228, 252);">
+              <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">User</th>
+              <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Date</th>
+              <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Status</th>
+              <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (appointment of appointments; track appointment.id) {   
+              <tr>
+                <td class="px-4 py-2">
+                  <div class="flex items-center gap-2">
+                    <img [src]="appointment.user.profilePicture" alt="User Profile Picture" class="w-8 h-8 rounded-full">
+                    <span>{{ appointment.user.username }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-2">{{ appointment.date | date: 'short' }}</td>
+                <td class="px-4 py-2">
+                  <span [ngClass]="{
+                    'text-green-500': appointment.status_appointment === 'confirmed',
+                    'text-yellow-500': appointment.status_appointment === 'pending',
+                    'text-red-500': appointment.status_appointment === 'canceled'
+                  }">
+                    {{ appointment.status_appointment | titlecase }}
+                  </span>
+                </td>
+                <td class="px-4 py-2 flex gap-2" style="justify-content: center;">
+                  <button  (click)="confirm(appointment.id)" [disabled]="appointment.status_appointment === 'confirmed'" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                    Confirm
+                  </button>
+                  <button (click)="cancel(appointment.id)" [disabled]="appointment.status_appointment === 'canceled'" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                    Cancel
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="text-center text-gray-500 text-lg py-6">
+          No appointments available.
+        </div>
+      }
+    </div>
+  </div>
+</div>

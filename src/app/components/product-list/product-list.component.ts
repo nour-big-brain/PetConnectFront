@@ -1,21 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../modals/product';
 import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-product-listing',
-  imports:[ReactiveFormsModule],
-  standalone:true,
+  imports: [ReactiveFormsModule,FormsModule],
+  standalone: true,
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css'] 
+  styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   showProductModal: boolean = false;
   productForm: FormGroup;
-  selectedProduct: Product | null = null; // For editing
+  selectedProduct: Product | null = null; 
+  openProduct: any = null;
+  filterTitle: string = '';
+filterLocation: string = '';
+
+  showProductDetails(product: any): void {
+    this.openProduct = product;
+    document.body.classList.add('overflow-hidden');
+  }
+
+  closeProductDetails(): void {
+    this.openProduct = null;
+    document.body.classList.remove('overflow-hidden');
+  }
+
 
   constructor(
     private productService: ProductService,
@@ -29,19 +43,57 @@ export class ProductListComponent implements OnInit {
       priceMin: [0, Validators.min(0)],
       priceMax: [0, Validators.min(0)],
       description: ['', Validators.required],
-      image: [''] // Consider using a base64 string or URL
+      image: [''] 
     });
   }
 
   ngOnInit(): void {
     this.loadProducts();
+  const staticProduct: Product = {
+    id: 999,
+    title: 'Static Sample Product',
+    status: 'Available',
+    date: '2025-05-11',
+    location: 'Static City',
+    price: 50.00 as DoubleRange,
+    description: 'This is a hardcoded static product for display purposes.',
+    image: '',
+    validated: true,
+    user: {
+      id: 1,
+      username: 'John Doe',
+      phoneNumber: '99 999 999',
+      email: 'johndoe@example.com'
+    }
+  };
+
+  const anotherStaticProduct: Product = {
+    id: 1000,
+    title: 'Another Static Product',
+    status: 'Unavailable',
+    date: '2025-06-15',
+    location: 'Another City',
+    price: 75.00 as DoubleRange,
+    description: 'This is another hardcoded static product for display purposes.',
+    image: '',
+    validated: false,
+    user: {
+      id: 2,
+      username: 'Jane Smith',
+      phoneNumber: '88 888 888',
+      email: 'janesmith@example.com'
+    }
+  };
+
+  this.products.push(staticProduct, anotherStaticProduct);
+  this.filteredProducts.push(staticProduct, anotherStaticProduct);
   }
 
   loadProducts(): void {
     this.productService.getAllProducts().subscribe(
       (products) => {
         this.products = products;
-        this.filteredProducts = [...this.products]; // Initially, show all products
+        this.filteredProducts = [...this.products]; 
       },
       (error) => {
         console.error('Error loading products:', error);
@@ -50,8 +102,8 @@ export class ProductListComponent implements OnInit {
   }
 
   openProductModal(): void {
-    this.selectedProduct = null; // Reset for adding a new product
-    this.productForm.reset({ status: 'Available', priceMin: 0, priceMax: 0 }); // Reset the form
+    this.selectedProduct = null; 
+    this.productForm.reset({ status: 'Available', priceMin: 0, priceMax: 0 }); 
     this.showProductModal = true;
   }
 
@@ -64,22 +116,12 @@ export class ProductListComponent implements OnInit {
       const product: Product = this.productForm.value;
 
       if (this.selectedProduct) {
-        // Editing existing product (you'll need to add updateProduct method in your service)
         product.id = this.selectedProduct.id;
-        //this.productService.updateProduct(product).subscribe(
-        //  () => {
-        //    this.loadProducts(); // Reload the product list
-        //    this.closeProductModal();
-        //  },
-        //  (error) => {
-        //    console.error('Error updating product:', error);
-        //  }
-        //);
+       
       } else {
-        // Creating a new product
         this.productService.createProduct(product).subscribe(
           () => {
-            this.loadProducts(); // Reload the product list
+            this.loadProducts(); 
             this.closeProductModal();
           },
           (error) => {
@@ -88,7 +130,6 @@ export class ProductListComponent implements OnInit {
         );
       }
     } else {
-      // Trigger form validation to show errors
       Object.values(this.productForm.controls).forEach(control => {
         control.markAsTouched();
       });
@@ -116,57 +157,25 @@ export class ProductListComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const title = (document.querySelector('input[placeholder="Search by title..."]') as HTMLInputElement).value;
-    const location = (document.querySelector('input[placeholder="Enter location..."]') as HTMLInputElement).value;
-
+    const title = this.filterTitle.trim().toLowerCase();
+    const location = this.filterLocation.trim().toLowerCase();
+  
     this.filteredProducts = this.products.filter(product => {
-      let titleMatch = true;
-      let locationMatch = true;
-
-      if (title) {
-        titleMatch = product.title.toLowerCase().includes(title.toLowerCase());
-      }
-
-      if (location) {
-        locationMatch = product.location.toLowerCase().includes(location.toLowerCase());
-      }
-
+      const titleMatch = title ? product.title.toLowerCase().includes(title) : true;
+      const locationMatch = location ? product.location.toLowerCase().includes(location) : true;
       return titleMatch && locationMatch;
     });
   }
+  
 
   resetFilters(): void {
+    this.filterTitle = '';
+    this.filterLocation = '';
     this.filteredProducts = [...this.products];
-    (document.querySelector('input[placeholder="Search by title..."]') as HTMLInputElement).value = '';
-    (document.querySelector('input[placeholder="Enter location..."]') as HTMLInputElement).value = '';
   }
+  
 
-  editProduct(id: number): void {
-    this.selectedProduct = this.products.find(product => product.id === id) || null;
-    if (this.selectedProduct) {
-      this.productForm.patchValue({
-        title: this.selectedProduct.title,
-        status: this.selectedProduct.status,
-        date: this.selectedProduct.date,
-        location: this.selectedProduct.location,
-        price:this.selectedProduct.price,
-        description: this.selectedProduct.description,
-        image: this.selectedProduct.image
-      });
-      this.openProductModal();
-    }
-  }
 
-  deleteProduct(id: number): void {
-    if (confirm('Are you sure you want to delete this product?')) {
-      this.productService.deleteProduct(id).subscribe(
-        () => {
-          this.loadProducts();
-        },
-        (error) => {
-          console.error('Error deleting product:', error);
-        }
-      );
-    }
-  }
+
+ 
 }

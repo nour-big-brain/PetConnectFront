@@ -1,4 +1,5 @@
 import { Pet } from "./pet";
+import { User } from "./user";
 
 export interface AdoptionOffer {
     id?: number;
@@ -10,4 +11,5 @@ export interface AdoptionOffer {
     status: string;
     petId?: number;
     pet: Pet
+    user:User;
 }

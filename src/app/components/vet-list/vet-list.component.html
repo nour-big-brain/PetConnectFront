@@ -1,0 +1,79 @@
+<div class="vet-container py-6">
+    <!-- Hero Image Section (Full Width) -->
+    <div class="hero-image mb-6">
+      <img src="/ressources/Selection.png" alt="Pet Vet Care" class="w-full h-64 object-cover">
+    </div>
+  
+    <!-- Vet List Section -->
+    <div class="vet-list space-y-6 px-4">
+      <h2 class="text-2xl font-bold mb-4">Our Vets</h2>
+  
+      @if (loading) {
+        <div class="text-center text-gray-500">Loading...</div>
+      }
+  
+      @if (error) {
+        <div class="text-center text-red-500">
+          <p>Something went wrong. Please try again later.</p>
+          <button class="mt-2 px-4 py-2 bg-blue-500 text-white rounded" (click)="loadVets()">Retry</button>
+        </div>
+      }
+  
+      @if (!loading && !error) {
+        @for (vet of vets; track vet.id) {
+          <div class="vet-card flex items-center bg-white shadow-md rounded-lg p-4">
+            <img [src]="vet.profilePicture || '/ressources/petvet.jpg'" [alt]="vet.username" class="w-24 h-24 object-cover rounded-full mr-4">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-800">{{ vet.username }}</h3>
+              <p class="text-sm text-gray-600">{{ vet.address }}</p>
+              <button class="mt-2 px-4 py-2 bg-blue-500 text-white rounded" (click)="openAppointmentForm(vet)">Make Appointment</button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  
+    <!-- Appointment Modal -->
+    @if (showAppointmentForm) {
+      <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl flex">
+          <!-- Image Section -->
+          <div class="hidden md:block w-1/2">
+            <img src="/ressources/retry.jpg" alt="Appointment" class="w-full h-full object-cover rounded-l-lg">
+          </div>
+  
+          <!-- Form Section -->
+          <div class="w-full md:w-1/2 p-8">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-bold text-gray-800">Book an appointment</h3>
+              <button class="text-gray-500 hover:text-gray-800" (click)="closeAppointmentForm()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+  
+            <form (submit)="submitAppointment($event)">
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" [(ngModel)]="appointment.user.email" name="email" class="w-full border border-gray-300 rounded px-3 py-2" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Phone</label>
+                <input type="tel" [(ngModel)]="appointment.user.phoneNumber" name="phone" class="w-full border border-gray-300 rounded px-3 py-2" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea [(ngModel)]="appointment.description" name="description" class="w-full border border-gray-300 rounded px-3 py-2" required></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded mr-2" (click)="closeAppointmentForm()">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-pink-500 text-white rounded">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+  

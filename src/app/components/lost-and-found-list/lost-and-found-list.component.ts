@@ -1,28 +1,101 @@
 import { Component, OnInit } from '@angular/core';
 import { LostAndFound } from '../../modals/lost-and-found';
 import { LostAndFoundService } from '../../services/lost-and-found.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-lost-and-found-list',
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './lost-and-found-list.component.html',
-  styleUrl: './lost-and-found-list.component.css'
+  styleUrls: ['./lost-and-found-list.component.css']
 })
 export class LostAndFoundListComponent implements OnInit {
   lostAndFoundPosts: LostAndFound[] = [];
   filteredPosts: LostAndFound[] = [];
   showPostModal: boolean = false;
   lostForm!: FormGroup;
+  openPetId: any = null;
+  current_user = { id: 1 };
+  today: string = new Date().toISOString().split('T')[0];
 
   filters = {
-    title: '',
-    date: '',
-    location: ''
+    location: '',
+    titleKeyword: '',
+    status: '',
+    petName: '',
+    breed: '',
+    sex: '',
+    minAge: null,
+    maxAge: null,
+    startDate: '',
+    endDate: ''
   };
+
+  search = {
+    location: '',
+    titleKeyword: '',
+    status: '',
+    petName: '',
+    breed: '',
+    sex: '',
+    minAge: null,
+    maxAge: null,
+    startDate: '',
+    endDate: ''
+  };
+
+  staticPosts: LostAndFound[] = [
+    {
+      id: 1,
+      status: 'Lost',
+      pet: {
+        id: 1,
+        name: 'Buddy',
+        breed: 'Golden Retriever',
+        description:'funny dog',
+        age: 3,
+        sex: 'Male',
+      },
+      description: 'Lost golden retriever near Central Park.',
+      date: '2023-03-15',
+      title: 'Lost Dog: Buddy',
+      location: 'Central Park, NY',
+      validated: true,
+      image: 'buddy.jpg',
+      user: {
+        id: 1,
+        username: 'John Doe',
+        email: 'john.doe@example.com',
+        phoneNumber: '123-456-7890'
+      }
+    },
+    {
+      id: 2,
+      status: 'Found',
+      pet: {
+        id: 2,
+        name: 'Whiskers',
+        breed: 'Siamese',
+        description:'lovely cat',
+        age: 2,
+        sex: 'Female'
+      },
+      description: 'Found a Siamese cat near Elm Street.',
+      date: '2023-03-20',
+      title: 'Found Cat: Whiskers',
+      location: 'Elm Street, NY',
+      validated: false,
+      image: 'whiskers.jpg',
+      user: {
+        id: 2,
+        username: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        phoneNumber: '987-654-3210'
+      }
+    }
+  ];
 
   constructor(
     private lostAndFoundService: LostAndFoundService,
@@ -42,31 +115,74 @@ export class LostAndFoundListComponent implements OnInit {
       location: [''],
       description: [''],
       image: [''],
-      petId: [null]
+      petName: [''],
+      petBreed: [''],
+      petAge: [null],
+      petSex: ['']
     });
   }
 
   loadPosts(): void {
-    this.lostAndFoundService.getAllPosts().subscribe((posts) => {
+    this.lostAndFoundService.getAllPosts().subscribe(posts => {
       this.lostAndFoundPosts = posts;
-      this.filteredPosts = posts;
+      this.lostAndFoundPosts.push(...this.staticPosts);
+    });
+  }
+
+  applySearch(): void {
+    this.lostAndFoundService.filterLostAndFound(this.search).subscribe(filtered => {
+      this.lostAndFoundPosts = filtered;
+      console.log(this.lostAndFoundPosts);
     });
   }
 
   applyFilters(): void {
-    this.filteredPosts = this.lostAndFoundPosts.filter(post => {
-      return (
-        (!this.filters.title || post.title.toLowerCase().includes(this.filters.title.toLowerCase())) &&
-        (!this.filters.date || post.date === this.filters.date) &&
-        (!this.filters.location || post.location.toLowerCase().includes(this.filters.location.toLowerCase()))
-      );
+    const query = { ...this.filters };
+
+    if (query.startDate) query.startDate = this.formatDate(query.startDate);
+    if (query.endDate) query.endDate = this.formatDate(query.endDate);
+
+    this.lostAndFoundService.filterLostAndFound(query).subscribe(filtered => {
+      this.lostAndFoundPosts = filtered;
+      console.log(this.lostAndFoundPosts);
+
     });
   }
 
   resetFilters(): void {
-    this.filters = { title: '', date: '', location: '' };
-    this.filteredPosts = [...this.lostAndFoundPosts];
+    this.filters = {
+      location: '',
+      titleKeyword: '',
+      status: 'lost',
+      petName: '',
+      breed: '',
+      sex: '',
+      minAge: null,
+      maxAge: null,
+      startDate: '',
+      endDate: ''
+    };
+    this.loadPosts();
   }
+  showPetDetails(id: number): void {
+    this.openPetId = this.lostAndFoundPosts.find(p => p.id === id);
+    document.body.classList.add('overflow-hidden');
+  }
+  closePetDetails(): void {
+    console.log('Closing pet details'); 
+    this.openPetId = null;
+    document.body.classList.remove('overflow-hidden');
+  }
+  formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+
+  
 
   openPostModal(): void {
     this.showPostModal = true;

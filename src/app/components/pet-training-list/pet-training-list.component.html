@@ -1,0 +1,55 @@
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sort-section">
+      <label>SORT BY</label>
+      <select>
+        <option>Name</option>
+        <option selected>Service type</option>
+        <option>Location</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Filter Tags -->
+    <div class="filter-tags">
+      <span>{{ professionalServices.length }} results • Filters: Sort by: Service type</span>
+      <div class="tags">
+      </div>
+    </div>
+
+    <!-- Profile List -->
+    <div class="profile-list">
+      @for (professionalService of professionalServices; track $index) {
+        <div class="profile">
+          <div class="profile-header">
+            <h3>{{ professionalService.name }}</h3>
+            <p class="service-type">Type: {{ professionalService.type }}</p>
+          </div>
+          <div class="profile-info"> <br>
+            <p class="description">{{ professionalService.description }}</p>
+            <p class="rating">Rating: {{ professionalService.rating }} stars</p>
+            <div class="business-owners">
+              <h4>Business Owners:</h4>
+              <ul>
+                @for (owner of professionalService.businessOwners; track owner.id) {
+                  <li>
+                    {{ owner.firstname }} (ID: {{ owner.id }}) <br>
+                    {{owner.lastname}} <br> <hr>
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+      }
+    </div>
+    <routerLink routerLink="/add-pet-training" class="add-service">
+              <span>Post Service</span> </routerLink>
+
+
+  </div>
+</div>

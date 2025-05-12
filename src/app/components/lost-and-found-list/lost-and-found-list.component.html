@@ -186,12 +186,12 @@
   </div>
 </div>
   <!-- Modal -->
-  @if(showPostModal){
+@if(showPostModal){
   <div class="fixed inset-0 bg-gray-200/60 backdrop-blur-sm flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-0 flex overflow-hidden">
+      
       <!-- Left image -->
-      <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url('/ressources/half.jpg');">
-      </div>
+      <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url('/ressources/half.jpg');"></div>
 
       <!-- Right form -->
       <div class="w-full md:w-1/2 p-8">
@@ -205,13 +205,14 @@
         </div>
 
         <form [formGroup]="lostForm" (ngSubmit)="submitLostReport()" class="space-y-4">
+
           <!-- Title + Status -->
           <div class="grid grid-cols-2 gap-4">
             <input formControlName="title" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
               placeholder="Title">
             <select formControlName="status" class="bg-gray-100 rounded-lg px-4 py-2 w-full">
-              <option value="Lost">Lost</option>
-              <option value="Found">Found</option>
+              <option value="lost">Lost</option>
+              <option value="found">Found</option>
             </select>
           </div>
 
@@ -222,25 +223,31 @@
               placeholder="Location">
           </div>
 
-          <!-- Pet Name + Type -->
-          <div class="grid grid-cols-2 gap-4">
-            <input formControlName="petName" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+          <!-- Pet Name + Breed -->
+          <div formGroupName="pet" class="grid grid-cols-2 gap-4">
+            <input formControlName="name" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
               placeholder="Pet Name">
-            <input formControlName="petBreed" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+            <input formControlName="breed" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
               placeholder="Breed">
           </div>
 
           <!-- Age + Sex -->
-          <div class="grid grid-cols-2 gap-4">
-            <input formControlName="petAge" type="number" min="0" max="20"
+          <div formGroupName="pet" class="grid grid-cols-2 gap-4">
+            <input formControlName="age" type="number" min="0" max="20"
               class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Age">
-            <input formControlName="petSex" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
+            <input formControlName="sex" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
               placeholder="Sex">
           </div>
 
-          <!-- Description -->
+          <!-- Pet Description -->
+          <div formGroupName="pet">
+            <textarea formControlName="description" rows="3" class="w-full bg-gray-100 rounded-lg px-4 py-2"
+              placeholder="Describe the pet..."></textarea>
+          </div>
+
+          <!-- General Description -->
           <textarea formControlName="description" rows="3" class="w-full bg-gray-100 rounded-lg px-4 py-2"
-            placeholder="Describe the pet or event..."></textarea>
+            placeholder="Describe the event..."></textarea>
 
           <!-- Upload Photo -->
           <div>
@@ -260,4 +267,5 @@
       </div>
     </div>
   </div>
-  }
+}
+

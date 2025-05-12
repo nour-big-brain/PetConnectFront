@@ -3,6 +3,7 @@ import { LostAndFound } from '../../modals/lost-and-found';
 import { LostAndFoundService } from '../../services/lost-and-found.service';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PetService } from '../../services/pet.service';
 
 @Component({
   selector: 'app-lost-and-found-list',
@@ -54,7 +55,7 @@ export class LostAndFoundListComponent implements OnInit {
         id: 1,
         name: 'Buddy',
         breed: 'Golden Retriever',
-        description:'funny dog',
+        description: 'funny dog',
         age: 3,
         sex: 'Male',
       },
@@ -78,7 +79,7 @@ export class LostAndFoundListComponent implements OnInit {
         id: 2,
         name: 'Whiskers',
         breed: 'Siamese',
-        description:'lovely cat',
+        description: 'lovely cat',
         age: 2,
         sex: 'Female'
       },
@@ -99,28 +100,36 @@ export class LostAndFoundListComponent implements OnInit {
 
   constructor(
     private lostAndFoundService: LostAndFoundService,
+    private petService: PetService, // Add this
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.loadPosts();
   }
-
   initForm(): void {
-    this.lostForm = this.fb.group({
-      title: [''],
-      status: ['Lost'],
-      date: [''],
-      location: [''],
-      description: [''],
-      image: [''],
-      petName: [''],
-      petBreed: [''],
-      petAge: [null],
-      petSex: ['']
-    });
-  }
+  this.lostForm = this.fb.group({
+    title: [''],
+    status: ['Lost'],
+    date: [''],
+    location: [''],
+    description: [''],
+    image: [''],
+    pet: this.fb.group({
+      name: [''],
+      breed: [''],
+      age: [null],
+      sex: [''],
+      description: ['']
+    }),
+    validated: false,
+    user: {
+      id: this.current_user.id,
+    }
+  });
+}
+
 
   loadPosts(): void {
     this.lostAndFoundService.getAllPosts().subscribe(posts => {
@@ -169,7 +178,7 @@ export class LostAndFoundListComponent implements OnInit {
     document.body.classList.add('overflow-hidden');
   }
   closePetDetails(): void {
-    console.log('Closing pet details'); 
+    console.log('Closing pet details');
     this.openPetId = null;
     document.body.classList.remove('overflow-hidden');
   }
@@ -182,7 +191,7 @@ export class LostAndFoundListComponent implements OnInit {
   }
 
 
-  
+
 
   openPostModal(): void {
     this.showPostModal = true;
@@ -192,14 +201,30 @@ export class LostAndFoundListComponent implements OnInit {
     this.showPostModal = false;
     this.lostForm.reset({ status: 'Lost' });
   }
-
   submitLostReport(): void {
-    const newPost = this.lostForm.value;
-    this.lostAndFoundService.createPost(newPost).subscribe(() => {
-      this.closePostModal();
-      this.loadPosts();
+    const formValue = this.lostForm.value;
+
+    // Extract pet data from the form
+    const petData = formValue.pet;
+
+    this.petService.addPet(petData).subscribe({
+      next: (createdPet) => {
+        const newPost = {
+          ...formValue,
+          pet: createdPet 
+        };
+
+        this.lostAndFoundService.createPost(newPost).subscribe(() => {
+          this.closePostModal();
+          this.loadPosts();
+        });
+      },
+      error: (err) => {
+        console.error('Error creating pet:', err);
+      }
     });
   }
+
 
   onLostFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

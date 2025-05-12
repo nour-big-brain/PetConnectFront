@@ -18,7 +18,7 @@ export class AuthService {
 
   // ----------- REGISTER -----------
   register(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/auth/register`, user).pipe(
+    return this.http.post(`${this.apiUrl}/users/register`, user).pipe(
       tap((res: any) => {
         this.saveAuthData(res.token, res.user);
       })
@@ -27,7 +27,7 @@ export class AuthService {
 
   // ----------- LOGIN -----------
   login(user: User): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/auth/login`, user).pipe(
+    return this.http.post(`${this.apiUrl}/users/login`, user).pipe(
       tap((res: any) => {
         this.saveAuthData(res.token, res.user);
       })

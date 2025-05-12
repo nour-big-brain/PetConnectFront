@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../modals/user';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -17,15 +18,31 @@ export class SignupComponent {
   };
 
   password: string = '';
-  lastName: string = '';
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+
+  constructor(private authService: AuthService) {}
 
   onSubmit(event: Event): void {
     event.preventDefault();
+    this.successMessage = null;
+    this.errorMessage = null;
+
+    // Send the registration request
     const newUser = {
       ...this.user,
-      lastName: this.lastName,
       password: this.password
     };
-    console.log('User Registered:', newUser);
+
+    this.authService.register(newUser).subscribe({
+      next: (res) => {
+        this.successMessage = 'Registration successful!';
+        console.log(res);
+      },
+      error: (err) => {
+        this.errorMessage = err.error || 'Registration failed.';
+        console.error(err);
+      }
+    });
   }
 }

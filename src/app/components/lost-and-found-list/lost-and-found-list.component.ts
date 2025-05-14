@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { LostAndFound } from '../../modals/lost-and-found';
 import { LostAndFoundService } from '../../services/lost-and-found.service';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { PetService } from '../../services/pet.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../modals/user';
 
 @Component({
   selector: 'app-lost-and-found-list',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule,DatePipe],
   templateUrl: './lost-and-found-list.component.html',
   styleUrls: ['./lost-and-found-list.component.css']
 })
@@ -18,7 +20,8 @@ export class LostAndFoundListComponent implements OnInit {
   showPostModal: boolean = false;
   lostForm!: FormGroup;
   openPetId: any = null;
-  current_user = { id: 1 };
+
+  current_user !: User;
   today: string = new Date().toISOString().split('T')[0];
 
   filters = {
@@ -47,67 +50,28 @@ export class LostAndFoundListComponent implements OnInit {
     endDate: ''
   };
 
-  staticPosts: LostAndFound[] = [
-    {
-      id: 1,
-      status: 'Lost',
-      pet: {
-        id: 1,
-        name: 'Buddy',
-        breed: 'Golden Retriever',
-        description: 'funny dog',
-        age: 3,
-        sex: 'Male',
-      },
-      description: 'Lost golden retriever near Central Park.',
-      date: '2023-03-15',
-      title: 'Lost Dog: Buddy',
-      location: 'Central Park, NY',
-      validated: true,
-      image: 'buddy.jpg',
-      user: {
-        id: 1,
-        username: 'John Doe',
-        email: 'john.doe@example.com',
-        phoneNumber: '123-456-7890'
-      }
-    },
-    {
-      id: 2,
-      status: 'Found',
-      pet: {
-        id: 2,
-        name: 'Whiskers',
-        breed: 'Siamese',
-        description: 'lovely cat',
-        age: 2,
-        sex: 'Female'
-      },
-      description: 'Found a Siamese cat near Elm Street.',
-      date: '2023-03-20',
-      title: 'Found Cat: Whiskers',
-      location: 'Elm Street, NY',
-      validated: false,
-      image: 'whiskers.jpg',
-      user: {
-        id: 2,
-        username: 'Jane Smith',
-        email: 'jane.smith@example.com',
-        phoneNumber: '987-654-3210'
-      }
-    }
-  ];
+  staticPosts: LostAndFound[] = [];
 
   constructor(
+
     private lostAndFoundService: LostAndFoundService,
-    private petService: PetService, // Add this
+    private petService: PetService, 
+    private authService: AuthService,
     private fb: FormBuilder
   ) { }
-
+   
   ngOnInit(): void {
+    console.log("Component initialized");
+    this.loadCurrentUser();
     this.initForm();
     this.loadPosts();
   }
+  loadCurrentUser(): void {
+    this.current_user = this.authService.getUserFromStorage(); 
+    console.log('Current user:', this.current_user);
+    
+  }
+
   initForm(): void {
   this.lostForm = this.fb.group({
     title: [''],
@@ -124,9 +88,7 @@ export class LostAndFoundListComponent implements OnInit {
       description: ['']
     }),
     validated: false,
-    user: {
-      id: this.current_user.id,
-    }
+    user:this.current_user,
   });
 }
 
@@ -174,9 +136,18 @@ export class LostAndFoundListComponent implements OnInit {
     this.loadPosts();
   }
   showPetDetails(id: number): void {
-    this.openPetId = this.lostAndFoundPosts.find(p => p.id === id);
+  this.openPetId = this.lostAndFoundPosts.find(p => p.id === id);
+
+  if (this.openPetId) {
+    // Get the current user from local storage
+    this.loadCurrentUser();
+    
+    // Merge the current user into the openPetId object
+    this.openPetId = { ...this.openPetId, user: this.current_user };
+    console.log('Updated openPetId:', this.openPetId);
     document.body.classList.add('overflow-hidden');
   }
+}
   closePetDetails(): void {
     console.log('Closing pet details');
     this.openPetId = null;
@@ -204,7 +175,6 @@ export class LostAndFoundListComponent implements OnInit {
   submitLostReport(): void {
     const formValue = this.lostForm.value;
 
-    // Extract pet data from the form
     const petData = formValue.pet;
 
     this.petService.addPet(petData).subscribe({

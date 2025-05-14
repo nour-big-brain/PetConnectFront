@@ -7,7 +7,7 @@ import { User } from '../modals/user';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8087'; 
+  private apiUrl = 'http://localhost:8087';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
 
@@ -20,6 +20,7 @@ export class AuthService {
   register(user: User): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/register`, user).pipe(
       tap((res: any) => {
+        console.log('Register API Response:', res); // Inspect the response
         this.saveAuthData(res.token, res.user);
       })
     );
@@ -29,6 +30,7 @@ export class AuthService {
   login(user: User): Observable<any> {
     return this.http.post(`${this.apiUrl}/users/login`, user).pipe(
       tap((res: any) => {
+        console.log('Login API Response:', res); // Inspect the response
         this.saveAuthData(res.token, res.user);
       })
     );
@@ -65,6 +67,7 @@ export class AuthService {
   // ----------- HELPERS -----------
 
   private saveAuthData(token: string, user: any) {
+    console.log('Saving to local storage:', user); // Log the user object before saving
     localStorage.setItem(this.tokenKey, token);
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.currentUserSubject.next(user);
@@ -79,8 +82,13 @@ export class AuthService {
   }
 
   getUserFromStorage() {
-    const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
+    const userString = localStorage.getItem(this.userKey); // Get the string from local storage
+    if (userString) {
+      const user = JSON.parse(userString);
+      console.log('Retrieved from local storage:', user); // Log the user object after retrieval
+      return user;
+    }
+    return null;
   }
 
   private getAuthHeaders(): HttpHeaders {

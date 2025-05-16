@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../modals/user';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -21,7 +22,9 @@ export class SignupComponent {
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService  ,private router: Router) {}
+
+ 
 
   onSubmit(event: Event): void {
     event.preventDefault();
@@ -33,10 +36,12 @@ export class SignupComponent {
       ...this.user,
       password: this.password
     };
-
+     console.log('Payload being sent:', newUser);
     this.authService.register(newUser).subscribe({
       next: (res) => {
         this.successMessage = 'Registration successful!';
+        // navigate to login 
+        this.router.navigate(['/login']);
         console.log(res);
       },
       error: (err) => {

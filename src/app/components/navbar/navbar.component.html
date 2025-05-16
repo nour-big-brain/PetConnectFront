@@ -13,8 +13,15 @@
 
 
       </div>
-      <button class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700" routerLink="/signup">
-        Sign In
-      </button>
+      @if (!(isLoggedIn$ | async)){
+        <button class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700" routerLink="/signup">
+          Sign In
+        </button>
+      }
+      @if(isLoggedIn$ | async){
+        <button (click)="onLogout()" class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700" routerLink="/profile">
+          Logout
+        </button>
+      }
     </div>
   </nav>

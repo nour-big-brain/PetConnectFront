@@ -1,13 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { User } from '../modals/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8087';
+  private apiUrl = 'http://localhost:8095';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
 
@@ -31,7 +31,11 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/users/login`, user).pipe(
       tap((res: any) => {
         console.log('Login API Response:', res); // Inspect the response
-        this.saveAuthData(res.token, res.user);
+        if (res.token && res.user) {
+                this.saveAuthData(res.token, res.user);
+            } else {
+                console.error('Token or user data missing in response');
+            }
       })
     );
   }
@@ -67,7 +71,7 @@ export class AuthService {
   // ----------- HELPERS -----------
 
   private saveAuthData(token: string, user: any) {
-    console.log('Saving to local storage:', user); // Log the user object before saving
+    console.log('Saving to local storage:', { token, user }); // Log the user object before saving
     localStorage.setItem(this.tokenKey, token);
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.currentUserSubject.next(user);
@@ -77,8 +81,8 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
+  isAuthenticated(): Observable<boolean> {
+   return this.currentUser$.pipe(map((user) => !!user)); 
   }
 
   getUserFromStorage() {

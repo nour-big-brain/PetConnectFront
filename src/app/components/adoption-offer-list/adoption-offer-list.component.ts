@@ -56,25 +56,26 @@ export class AdoptionOfferListComponent implements OnInit {
   constructor(
     private adoptionOfferService: AdoptionOfferService,
     private fb: FormBuilder,
-    private petService :PetService
-  ) {
+    private petService: PetService
+) {
     this.adoptionForm = this.fb.group({
+      title: ['', Validators.required],
       petName: ['', Validators.required],
       age: [null, [Validators.required, Validators.min(0), Validators.max(20)]],
       breed: ['', Validators.required],
       sex: ['', Validators.required],
       location: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', [Validators.required, Validators.minLength(10)]],
+      image: [null]
     });
   }
 
   ngOnInit(): void {
-    // Static fallback offer in case backend is off
+    // Static fallback offer in case backend fails
     const staticOffer: AdoptionOffer = {
       id: 1,
-      petId: 101,
       location: 'Tunis',
-      status: 'Available',
+      status: 'waiting',
       image: '', // sample image URL
       title: 'Adoption de Mimi',
       description: 'Jeune chat affectueux, cherche une famille aimante.',
@@ -87,17 +88,23 @@ export class AdoptionOfferListComponent implements OnInit {
         sex: 'Femelle',
         description: 'Joueuse et calme'
       },
-      user:{
-        username:'mai',
-        phoneNumber:'1234566'
-      }
+      user: {
+        username: 'mai',
+        phoneNumber: '1234566'
+      },
+      validated: false
     };
 
-    // Directly use static data since backend is off
-    this.adoptionOffers = [staticOffer];
-    //this.loadOffers(); // Load offers from backend if available
-    // Optionally, skip calling backend
-    // this.loadOffers();
+    // Load offers from backend
+    this.loadOffers();
+
+    // If backend call fails, use static data as fallback
+    setTimeout(() => {
+      if (this.adoptionOffers.length === 0) {
+        console.log('No offers loaded from backend, using static data');
+        this.adoptionOffers = [staticOffer];
+      }
+    }, 2000); // Wait 2 seconds before falling back to static data
   }
   
 
@@ -110,23 +117,28 @@ export class AdoptionOfferListComponent implements OnInit {
   }
 
   loadOffers(): void {
-    this.adoptionOfferService.getAllOffers().subscribe((offers) => {
-      console.log(offers);
-      this.adoptionOffers = offers;
-      this.adoptionOffers.forEach(offer => {
-        if (offer.pet.id) {
-          this.adoptionOfferService.getPetById(offer.pet.id).subscribe(pet => {
-            offer.pet = pet;
-            offer.pet.name = pet.name;
-            offer.pet.age = pet.age;
-            offer.pet.breed = pet.breed;
-            offer.pet.sex = pet.sex;
-            offer.pet.sex = pet.description;
-            offer.location = offer.location;
-            offer.image = offer.image;
-          });
-        }
-      });
+    this.adoptionOfferService.getAllOffers().subscribe({
+      next: (offers) => {
+        console.log('Loaded offers:', offers);
+        this.adoptionOffers = offers;
+        
+        // Load pet details for each offer
+        this.adoptionOffers.forEach(offer => {
+          if (offer.pet?.id) {
+            this.petService.getPetById(offer.pet.id).subscribe({
+              next: (pet) => {
+                offer.pet = {
+                  ...pet,
+                  id: offer.pet.id
+                };
+              },
+              error: (error) => {
+                console.error(`Error loading pet details for offer ${offer.id}:`, error);
+              }
+            });
+          }
+        });
+      },
     });
   }
     
@@ -209,37 +221,49 @@ export class AdoptionOfferListComponent implements OnInit {
     }
   }
   submitAdoptionOffer(): void {
-    if (this.adoptionForm.valid) {
+    
       const formValue = this.adoptionForm.value;
       
-      this.petService.addPet({
+      // First create the pet object
+      const pet = {
         name: formValue.petName,
         breed: formValue.breed,
-        sex: formValue.sex,
-        age: formValue.age,
+        sex: formValue.sex.toLowerCase(),
+        age: Number(formValue.age),
         description: formValue.description
-      }).subscribe(pet => {
-        const newPost = {
-          description: formValue.description,
-          date: new Date().toISOString(),
-          title: `Adoption de ${formValue.petName}`,
-          location: formValue.location,
-          validated: false,
-          image: this.selectedImage ? this.extractBase64(this.selectedImage) : null,
-        };
-        const newOffer = {
-          ...newPost,
-          pet: pet,
-          status: 'Available',
-          user: { username: 'defaultUser', phoneNumber: '0000000' } // Replace with actual user data
-        };
+      };
 
-        this.adoptionOfferService.createOffer(newOffer as AdoptionOffer).subscribe(() => {
-          this.closePostModal();
-          this.loadOffers();
-        });
+      this.petService.addPet(pet).subscribe({
+        next: (savedPet) => {
+          // Create the adoption offer with the saved pet
+          const adoptionOffer: AdoptionOffer = {
+            title: formValue.title,
+            description: formValue.description,
+            date: new Date().toISOString(),
+            location: formValue.location,
+            status: 'waiting' as 'waiting' | 'adopted', // explicitly type the status
+            validated: false,
+            image: this.selectedImage ? this.extractBase64(this.selectedImage) : null,
+            pet: savedPet,
+            user: this.current_user
+          };
+
+          this.adoptionOfferService.createOffer(adoptionOffer).subscribe({
+            next: (response) => {
+              console.log('Adoption offer created:', response);
+              this.closePostModal();
+              this.loadOffers();
+            },
+            error: (error) => {
+              console.error('Error creating adoption offer:', error);
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error saving pet:', error);
+        }
       });
-    }
+    
   }
 
   extractBase64(dataUrl: string): string {

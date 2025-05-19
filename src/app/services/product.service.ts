@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { Product } from '../modals/product';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,17 @@ export class ProductService {
   }
 
   createProduct(product: Product): Observable<Product> {
-    return this.http.post<Product>(`${this.apiUrl}`, product);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<Product>(`${this.apiUrl}`, product, { headers }).pipe(
+      tap(response => console.log('Create product response:', response)),
+      catchError(error => {
+        console.error('Create product error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   deleteProduct(id: number): Observable<void> {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Product } from '../../modals/product';
+import { Product, Status_Product } from '../../modals/product';
 import { ProductService } from '../../services/product.service';
 
 @Component({
@@ -34,16 +34,15 @@ filterLocation: string = '';
   constructor(
     private productService: ProductService,
     private fb: FormBuilder
-  ) {
+) {
     this.productForm = this.fb.group({
       title: ['', Validators.required],
-      status: ['Available', Validators.required],
+      status: ['available', Validators.required], // lowercase default value
       date: ['', Validators.required],
       location: ['', Validators.required],
-      priceMin: [0, Validators.min(0)],
-      priceMax: [0, Validators.min(0)],
+      price: [0, [Validators.required, Validators.min(0)]],
       description: ['', Validators.required],
-      image: [''] 
+      image: ['']
     });
   }
 
@@ -52,10 +51,10 @@ filterLocation: string = '';
   const staticProduct: Product = {
     id: 999,
     title: 'Static Sample Product',
-    status: 'Available',
+    status: 'available',
     date: '2025-05-11',
     location: 'Static City',
-    price: 50.00 as DoubleRange,
+    price: 50,
     description: 'This is a hardcoded static product for display purposes.',
     image: '',
     validated: true,
@@ -70,10 +69,10 @@ filterLocation: string = '';
   const anotherStaticProduct: Product = {
     id: 1000,
     title: 'Another Static Product',
-    status: 'Unavailable',
+    status: 'available',
     date: '2025-06-15',
     location: 'Another City',
-    price: 75.00 as DoubleRange,
+    price: 75,
     description: 'This is another hardcoded static product for display purposes.',
     image: '',
     validated: false,
@@ -113,25 +112,49 @@ filterLocation: string = '';
 
   submitProduct(): void {
     if (this.productForm.valid) {
-      const product: Product = this.productForm.value;
+      const formValue = this.productForm.value;
+      
+      const product: Product = {
+        title: formValue.title,
+        description: formValue.description,
+        date: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+        location: formValue.location,
+        status: formValue.status.toLowerCase() as Status_Product, // Ensure lowercase
+        price: Number(formValue.price),
+        validated: false,
+        image: formValue.image || null,
+        // The user will be set by the backend based on the authenticated user
+      };
 
-      if (this.selectedProduct) {
-        product.id = this.selectedProduct.id;
-       
-      } else {
-        this.productService.createProduct(product).subscribe(
-          () => {
-            this.loadProducts(); 
-            this.closeProductModal();
-          },
-          (error) => {
-            console.error('Error creating product:', error);
+      console.log('Submitting product:', product);
+
+      this.productService.createProduct(product).subscribe({
+        next: (response) => {
+          console.log('Product created successfully:', response);
+          this.loadProducts();
+          this.closeProductModal();
+        },
+        error: (error) => {
+          console.error('Error creating product:', error);
+          if (error.status === 400) {
+            // Handle validation errors
+            const validationErrors = error.error?.errors;
+            if (validationErrors) {
+              Object.keys(validationErrors).forEach(key => {
+                const control = this.productForm.get(key);
+                if (control) {
+                  control.setErrors({ serverError: validationErrors[key] });
+                }
+              });
+            }
           }
-        );
-      }
+        }
+      });
     } else {
-      Object.values(this.productForm.controls).forEach(control => {
-        control.markAsTouched();
+      // Mark all fields as touched to trigger validation messages
+      Object.keys(this.productForm.controls).forEach(key => {
+        const control = this.productForm.get(key);
+        control?.markAsTouched();
       });
     }
   }

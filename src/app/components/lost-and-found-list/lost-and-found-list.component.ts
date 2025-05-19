@@ -88,7 +88,7 @@ export class LostAndFoundListComponent implements OnInit {
       description: ['']
     }),
     validated: false,
-    user:this.current_user,
+    user:this.current_user.id,
   });
 }
 
@@ -173,24 +173,45 @@ export class LostAndFoundListComponent implements OnInit {
     this.lostForm.reset({ status: 'Lost' });
   }
   submitLostReport(): void {
-    const formValue = this.lostForm.value;
+    if (!this.lostForm.valid) {
+      console.error('Form validation failed');
+      return;
+    }
 
-    const petData = formValue.pet;
+    const formData = this.lostForm.value;
+    
+    // Create the post object with the correct structure
+   const post: LostAndFound = {
+  title: formData.title,
+  description: formData.description,
+  location: formData.location,
+  status: formData.status?.toLowerCase() || 'lost',
+  date: new Date().toISOString(),
+  validated: false,
+  pet: formData.pet?.name ? {
+    name: formData.pet.name,
+    age: Number(formData.pet.age) || 0,
+    breed: formData.pet.breed,
+    sex: formData.pet.sex,
+    description: formData.pet.description
+  } : null,
+  image: formData.image || '',
+  user: { id: this.current_user.id } // ✅ only send the user ID
+};
 
-    this.petService.addPet(petData).subscribe({
-      next: (createdPet) => {
-        const newPost = {
-          ...formValue,
-          pet: createdPet 
-        };
 
-        this.lostAndFoundService.createPost(newPost).subscribe(() => {
-          this.closePostModal();
-          this.loadPosts();
-        });
+    console.log('Submitting post:', post);
+
+    this.lostAndFoundService.createPost(post).subscribe({
+      next: (response) => {
+        console.log('Post created successfully:', response);
+        this.loadPosts();
+        this.closePostModal();
+        // Show success message
       },
-      error: (err) => {
-        console.error('Error creating pet:', err);
+      error: (error) => {
+        console.error('Error creating post:', error);
+        // Show error message
       }
     });
   }

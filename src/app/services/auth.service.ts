@@ -7,7 +7,7 @@ import { User } from '../modals/user';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8095';
+  private apiUrl = 'http://localhost:8087';
   private tokenKey = 'authToken';
   private userKey = 'authUser';
 

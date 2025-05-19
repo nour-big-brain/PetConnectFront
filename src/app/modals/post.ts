@@ -6,7 +6,7 @@ export interface Post {
     date: string;
     title: string;
     location: string;
-    validated: boolean;
-    image: string;
-    user: User;
+    validated?: boolean;
+    image?: string;
+    user?: User;
 }

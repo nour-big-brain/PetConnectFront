@@ -6,6 +6,7 @@ export interface Appointment {
     date: string;
     description: string;
     status_appointment: string;
-    vet: Vet;
-    user:User;
+    vetId: String,
+     username: string;
+    profilePicture: string;
 }

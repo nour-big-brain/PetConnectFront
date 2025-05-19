@@ -17,6 +17,7 @@ export class PetWalkingListComponent implements OnInit {
         location: '',
         descriptionKeyword: '',
         providerUsername: '',
+        
       }
       NonprofessionalServices:NonProfessionalService[] = [];
       NonprofServiceService:NonProfessionalServiceService=inject(NonProfessionalServiceService);
@@ -28,6 +29,7 @@ export class PetWalkingListComponent implements OnInit {
       petWalkingProf(){
         this.NonprofServiceService.filterNonProfServices(this.filter).subscribe(
           res=>{
+            
             this.NonprofessionalServices=res;
             console.log(this.NonprofessionalServices);
           }

@@ -15,6 +15,8 @@ import { AddPetGroomingComponent } from './components/add-services/add-pet-groom
 import { AddPetSittingComponent } from './components/add-services/add-pet-sitting/add-pet-sitting.component';
 import { AddPetTrainingComponent } from './components/add-services/add-pet-training/add-pet-training.component';
 import { AddPetWalkingComponent } from './components/add-services/add-pet-walking/add-pet-walking.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ManageAppointmentsVetComponent } from './components/manage-appointments-vet/manage-appointments-vet.component';
 
 export const routes: Routes = [
     {path:'adoption-offers', component: AdoptionOfferListComponent},
@@ -30,6 +32,8 @@ export const routes: Routes = [
     {path: 'add-pet-sitting', component: AddPetSittingComponent},
     {path: 'add-pet-training', component: AddPetTrainingComponent},
     {path: 'add-pet-walking', component: AddPetWalkingComponent},
+    {path: 'profile', component: ProfileComponent},
+    {path: 'appointment', component: ManageAppointmentsVetComponent},
 
 
     {path:'vet', component: VetListComponent},
@@ -37,5 +41,5 @@ export const routes: Routes = [
 
     {path:'home', component:HomeComponent},
     {path:'servicesList',component:ServicesListComponent},
-    {path: '', redirectTo: '/home', pathMatch: 'full'},
+    {path: '', redirectTo: '/login', pathMatch: 'full'},
 ];

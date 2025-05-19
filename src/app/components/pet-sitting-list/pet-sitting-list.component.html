@@ -23,6 +23,7 @@
     <!-- Profile List -->
     <div class="profile-list">
       @for (NonprofessionalService of NonprofessionalServices; track $index) {
+        @if(NonprofessionalService.validated){
         <div class="profile">
           <div class="profile-header">
             <h3>{{ NonprofessionalService.name }}</h3>
@@ -43,7 +44,7 @@
               </ul>
             </div>
           </div>
-        </div>
+        </div> }
       }
     </div>
     <routerLink routerLink="/add-pet-sitting" class="add-service">

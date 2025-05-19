@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppointmentService } from '../../services/appointment.service';
 import { Appointment } from '../../modals/appointment';
 import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({ 
@@ -13,22 +14,32 @@ import { DatePipe, NgClass, TitleCasePipe } from '@angular/common';
 })
 export class ManageAppointmentsVetComponent implements OnInit {
   appointments: Appointment[] = []
+  currentUser: any;
 
-  vetId: number = 1; 
+  vetId: number = 1;
   // selectedDate: Date | null = null;
 
-  constructor(private appointmentService: AppointmentService) {}
+
+  constructor(private appointmentService: AppointmentService , private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadAppointments();
+    this.loadAppointmentsByVet();
+    this.currentUser = this.authService.getUserFromStorage();
+ 
   }
 
-  loadAppointments(): void {
-    this.appointmentService.getAppointmentsByVet(this.vetId).subscribe(
-      data => this.appointments = data,
-      error => console.error(error));
+  loadAppointmentsByVet(): void {
+ this.appointmentService.getAppointments().subscribe((data: Appointment[]) => {
+      this.appointments = data.filter(appointment => appointment.vetId === this.currentUser.id);
+      
+      console.log(this.appointments);
+    });
   }
 
-  confirm(id: number | undefined): void { if(id != undefined) this.appointmentService.confirmAppointment(id).subscribe(() => this.loadAppointments());}
-  cancel(id: number | undefined): void { if(id != undefined) this.appointmentService.cancelAppointment(id).subscribe(() => this.loadAppointments());}
+  confirm(id: number | undefined): void { if(id != undefined) this.appointmentService.confirmAppointment(id).subscribe(() => this.loadAppointmentsByVet()); 
+    this.ngOnInit();
+  }
+  cancel(id: number | undefined): void { if(id != undefined) this.appointmentService.cancelAppointment(id).subscribe(() => this.loadAppointmentsByVet());
+     this.ngOnInit();
+  }
 }

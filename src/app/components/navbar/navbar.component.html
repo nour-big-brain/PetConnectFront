@@ -5,20 +5,29 @@
         <span class="text-xl font-bold text-purple-600">PetConnect</span>
       </div>
       <div class="flex space-x-6">
+        @if ((isLoggedIn$ | async)){
         <a routerLink="/servicesList" class="text-gray-600 hover:text-purple-600">Services</a>
         <a routerLink="/lostandfoundList" class="text-gray-600 hover:text-purple-600">Lost & found</a>
         <a routerLink="/adoption-offers" class="text-gray-600 hover:text-purple-600">Adopt a pet</a>
         <a routerLink="/marketplace" class="text-gray-600 hover:text-purple-600">Marketplace</a>
         <a routerLink="/vet" class="text-gray-600 hover:text-purple-600">Our Vets</a>
-
-
+         @if (((isLoggedIn$ | async) && (isUser$ | async)) ){ 
+        <a routerLink="/profile" class="text-gray-600 hover:text-purple-600"> Profile</a>
+        
+         }@else if (((isLoggedIn$ | async) && (isVet$ | async))) {
+        <a routerLink="/appointment" class="text-gray-600 hover:text-purple-600"> Appointments</a>
+         }
+        
+        }
       </div>
+    
       @if (!(isLoggedIn$ | async)){
         <button class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700" routerLink="/signup">
           Sign In
         </button>
       }
       @if(isLoggedIn$ | async){
+        
         <button (click)="onLogout()" class="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700" routerLink="/profile">
           Logout
         </button>

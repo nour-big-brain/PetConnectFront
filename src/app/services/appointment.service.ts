@@ -11,8 +11,8 @@ export class AppointmentService {
 
   constructor(private http: HttpClient) {}
 
-  getAppointmentsByVet(vetId: number): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.baseUrl}/vet/${vetId}`);
+  getAppointments(): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.baseUrl}`);
   }
 
   confirmAppointment(id: number): Observable<Appointment> {

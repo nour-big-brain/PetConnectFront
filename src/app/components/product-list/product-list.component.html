@@ -193,8 +193,20 @@
           <div class="grid grid-cols-2 gap-4">
             <input formControlName="location" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
               placeholder="Location">
-            <input formControlName="price" type="number" class="bg-gray-100 rounded-lg px-4 py-2 w-full"
-              placeholder="Price">
+            <div class="form-group">
+              <label for="price">Price</label>
+              <input 
+                  type="number" 
+                  id="price" 
+                  formControlName="price"
+                  class="form-control" 
+                  [min]="0"
+              >
+              <div *ngIf="productForm.get('price')?.touched && productForm.get('price')?.invalid" class="text-danger">
+                  <small *ngIf="productForm.get('price')?.errors?.['required']">Price is required</small>
+                  <small *ngIf="productForm.get('price')?.errors?.['min']">Price must be greater than or equal to 0</small>
+              </div>
+            </div>
           </div>
 
           <!-- Description -->

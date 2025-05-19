@@ -1,16 +1,55 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { LostAndFound } from '../modals/lost-and-found';
-import { HttpClient, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LostAndFoundService {
-
   private apiUrl = 'http://localhost:8087/lost-and-found';
 
   constructor(private http: HttpClient) {}
+
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+  }
+
+  createPost(post: Partial<LostAndFound>): Observable<LostAndFound> {
+    const headers = this.getHeaders();
+    
+    // Ensure proper date formatting and data structure
+    const formattedPost = {
+      title: post.title,
+      description: post.description,
+      location: post.location,
+      status: post.status?.toLowerCase(),
+      date: new Date().toISOString(),
+      validated: false,
+      image: post.image,
+      user: post.user,
+      pet: post.pet ? {
+        name: post.pet.name,
+        age: Number(post.pet.age),
+        breed: post.pet.breed,
+        sex: post.pet.sex?.toLowerCase(),
+        description: post.pet.description
+      } : null
+    };
+
+    console.log('Sending formatted post:', formattedPost);
+
+    return this.http.post<LostAndFound>(this.apiUrl, formattedPost, { headers }).pipe(
+      tap(response => console.log('Server response:', response)),
+      catchError(error => {
+        console.error('API Error:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to create post'));
+      })
+    );
+  }
 
   getAllPosts(): Observable<LostAndFound[]> {
     return this.http.get<LostAndFound[]>(`${this.apiUrl}`);
@@ -18,9 +57,6 @@ export class LostAndFoundService {
 
   getPostById(id: number): Observable<LostAndFound> {
     return this.http.get<LostAndFound>(`${this.apiUrl}/${id}`);
-  }
-  createPost(post: LostAndFound): Observable<LostAndFound> {
-    return this.http.post<LostAndFound>(`${this.apiUrl}`, post);
   }
 
   deletePost(id: number): Observable<void> {

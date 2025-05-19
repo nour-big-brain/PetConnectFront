@@ -2,14 +2,14 @@ import { Pet } from "./pet";
 import { User } from "./user";
 
 export interface AdoptionOffer {
-    id?: number;
-    description: string;
-    date: string;
-    title: string;
-    location: string;
-    image:string;
-    status: string;
-    petId?: number;
-    pet: Pet
-    user:User;
+  id?: number;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  status: 'waiting' | 'adopted'; // Match Status_Adoption enum
+  validated: boolean;
+  image?: string | null;
+  pet: Pet;
+  user: User;
 }

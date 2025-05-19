@@ -9,277 +9,324 @@
         </div>
         <div class="flex gap-4 items-center w-full md:w-auto">
           <div class="search-container bg-white rounded-full shadow-md p-3 flex items-center w-full md:w-96">
-            <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>  
-            <input type="text" class="w-full text-gray-700 focus:outline-none" placeholder="Search for a new friend..." [(ngModel)]="search.titleKeyword" (keyup.enter)="applySearch()">
+            <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" class="w-full text-gray-700 focus:outline-none" placeholder="Search for a new friend..."
+              [(ngModel)]="search.titleKeyword" (keyup.enter)="applySearch()">
           </div>
-          <button (click)="openPostModal()" class="bg-pink-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-pink-600 transition-colors flex items-center text-lg font-bold">
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          <button (click)="openPostModal()"
+            class="bg-pink-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-pink-600 transition-colors flex items-center text-lg font-bold">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+              </path>
             </svg>
             Post Adoption Offer
           </button>
         </div>
       </div>
-    
 
-<!-- Filter Controls -->
-<div class="bg-white rounded-xl shadow-md p-6 mb-8">
-  <h3 class="text-lg font-bold text-purple-600 mb-4">Find Your Perfect Match</h3>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div>
-      <label class="text-gray-700 font-semibold block mb-2">Location</label>
-      <div class="relative">
-        <select class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none" [(ngModel)]="filters.location">
-          <option value="">All Locations</option>
-          <option value="New York">New York</option>
-          <option value="Los Angeles">Los Angeles</option>
-          <option value="Chicago">Chicago</option>
-          <option value="Houston">Houston</option>
-          <option value="Miami">Miami</option>
-        </select>
-        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
+
+      <!-- Filter Controls -->
+      <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h3 class="text-lg font-bold text-purple-600 mb-4">Find Your Perfect Match</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="text-gray-700 font-semibold block mb-2">Location</label>
+            <div class="relative">
+              <select
+                class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none"
+                [(ngModel)]="filters.location">
+                <option value="">All Locations</option>
+                <option value="New York">New York</option>
+                <option value="Los Angeles">Los Angeles</option>
+                <option value="Chicago">Chicago</option>
+                <option value="Houston">Houston</option>
+                <option value="Miami">Miami</option>
+              </select>
+              <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Start Date -->
+          <div>
+            <label class="text-gray-700 font-semibold block mb-2">Start Date</label>
+            <input type="date"
+              class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              [(ngModel)]="filters.startDate" [max]="filters.endDate || today">
+          </div>
+
+          <!-- End Date -->
+          <div>
+            <label class="text-gray-700 font-semibold block mb-2">End Date</label>
+            <input type="date"
+              class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              [(ngModel)]="filters.endDate" [min]="filters.startDate" [max]="today">
+          </div>
+
+
+          <div>
+            <label class="text-gray-700 font-semibold block mb-2">Age Range</label>
+            <div class="flex items-center space-x-2">
+              <input type="number"
+                class="w-24 bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="Min" min="0" max="20" [(ngModel)]="filters.minAge">
+              <span class="text-gray-700">to</span>
+              <input type="number"
+                class="w-24 bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                placeholder="Max" min="0" max="20" [(ngModel)]="filters.maxAge">
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-4">
+          <button
+            class="bg-purple-600 text-white px-5 py-2 rounded-full hover:bg-purple-700 transition-colors flex items-center"
+            (click)="applyFilters()">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+              </path>
+            </svg>
+            Apply Filters
+          </button>
+          <button class="bg-gray-200 text-gray-700 px-5 py-2 rounded-full hover:bg-gray-300 transition-colors"
+            (click)="resetFilters()">
+            Reset
+          </button>
         </div>
       </div>
-    </div>
-
-    <!-- Start Date -->
-<div>
-  <label class="text-gray-700 font-semibold block mb-2">Start Date</label>
-  <input
-    type="date"
-    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-    [(ngModel)]="filters.startDate"
-    [max]="filters.endDate || today"
-  >
-</div>
-
-    <!-- End Date -->
-    <div>
-      <label class="text-gray-700 font-semibold block mb-2">End Date</label>
-      <input
-        type="date"
-        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
-        [(ngModel)]="filters.endDate"
-        [min]="filters.startDate"
-        [max]="today"
-      >
-    </div>
-
-    
-    <div>
-      <label class="text-gray-700 font-semibold block mb-2">Age Range</label>
-      <div class="flex items-center space-x-2">
-        <input type="number" class="w-24 bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Min" min="0" max="20" [(ngModel)]="filters.minAge">
-        <span class="text-gray-700">to</span>
-        <input type="number" class="w-24 bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-pink-500" placeholder="Max" min="0" max="20" [(ngModel)]="filters.maxAge">
-      </div>
-    </div>
-  </div>
-  
-  <div class="mt-6 flex flex-wrap gap-4">
-    <button class="bg-purple-600 text-white px-5 py-2 rounded-full hover:bg-purple-700 transition-colors flex items-center" (click)="applyFilters()">
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-      </svg>
-      Apply Filters
-    </button>
-    <button class="bg-gray-200 text-gray-700 px-5 py-2 rounded-full hover:bg-gray-300 transition-colors" (click)="resetFilters()">
-      Reset
-    </button>
-  </div>
-</div>
 
       <!-- Card View -->
       @if (viewMode === 'cards') {
-        <div class="adoption-offer-list card-view grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          @if (adoptionOffers.length === 0) {
-            <div class="no-offers text-center py-12 bg-white rounded-xl shadow-md">
-              <p class="text-gray-600 text-lg">No adoption offers available at the moment. Check back later!</p>
-            </div>
-          }
-          @for (offer of adoptionOffers; track offer.id) {
-            <div class="offer-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-              <div class="card-image relative">
-                @if(offer.image){
-                  <img [src]="'data:image/jpeg;base64,' + offer.image" alt="{{ offer.pet.name }}" class="w-full h-full object-cover object-center" />
-                }
-                <div class="status-overlay absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full" [ngClass]="getStatusClass(offer.status)">
-                  {{ offer.status }}
-                </div>
-                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                  <h2 class="text-xl font-bold text-white">{{ offer.pet.name }}</h2>
-                </div>
-              </div>
-              <div class="offer-details p-5">
-                <div class="pet-tags flex flex-wrap gap-2 mb-3">
-                  <span class="bg-purple-100 text-purple-600 text-xs px-3 py-1 rounded-full">{{ offer.pet.breed }}</span>
-                  <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full">{{ offer.pet.sex }}</span>
-                  <span class="bg-pink-100 text-pink-600 text-xs px-3 py-1 rounded-full">{{ offer.pet.age }} {{ offer.pet.age === 1 ? 'year' : 'years' }}</span>
-                </div>
-                <div class="location flex items-center text-gray-500 text-sm mb-4">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                  {{ offer.location }}
-                </div>
-                <div class="offer-actions flex gap-2">
-                  @if(offer.id){
-                    <button (click)="showPetDetails(offer.id)" class="view-more-btn bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 transition-colors flex-1 flex items-center justify-center">
-                      View More
-                    </button>
-                   
-                  }
-                </div>
-              </div>
-            </div>
-
-            @if(openPetId === offer.id) {
-              <!-- Pet Details Modal -->
-              <div class="fixed inset-0 z-50 overflow-y-auto bg-white">
-                <div class="sticky top-0 z-10 bg-white shadow-sm">
-                  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                    <h2 class="text-xl font-semibold">Pet Details</h2>
-                    <button (click)="openPetId = null" class="text-gray-500 hover:text-gray-800">
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="container mx-auto px-4 py-6">
-                  <div class="flex flex-col lg:flex-row gap-12">
-                    <div class="w-full lg:w-1/2">
-                      <div class="mb-6 bg-gray-50 rounded-2xl p-8 flex items-center justify-center">
-                        <img [src]="'data:image/jpeg;base64,' + offer.image" alt="{{ offer.pet.name }}" class="max-h-96 object-contain" />
-                      </div>
-                    </div>
-
-                    <div class="w-full lg:w-1/2">
-                      <div class="flex justify-between items-center mb-4">
-                        <h1 class="text-3xl font-bold">{{ offer.pet.name }}</h1>
-                        <span class="bg-pink-500 text-white text-xs px-3 py-1 rounded-full">Available</span>
-                      </div>
-
-                      <div class="mb-8">
-                        <h3 class="text-xl font-semibold mb-4">Details</h3>
-                        <div class="grid grid-cols-1 gap-4">
-                          <div class="flex justify-between py-3 border-b border-gray-100">
-                            <span class="text-gray-500 font-medium">Age:</span>
-                            <span class="font-medium">{{ offer.pet.age }}</span>
-                          </div>
-                          <div class="flex justify-between py-3 border-b border-gray-100">
-                            <span class="text-gray-500 font-medium">Breed:</span>
-                            <span class="font-medium">{{ offer.pet.breed }}</span>
-                          </div>
-                          <div class="flex justify-between py-3 border-b border-gray-100">
-                            <span class="text-gray-500 font-medium">Gender:</span>
-                            <span class="font-medium">{{ offer.pet.sex }}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="mb-8">
-                        <h3 class="text-xl font-semibold mb-4">Description</h3>
-                        <p class="text-gray-600">{{ offer.description }}</p>
-                      </div>
-
-                      <div class="mb-8">
-                        <h3 class="text-xl font-semibold mb-4">Location</h3>
-                        <div class="flex items-center">
-                          <p class="text-gray-600">{{ offer.location }}</p>
-                        </div>
-                      </div>
-
-                      <div class="grid grid-cols-2 gap-4">
-                        <!-- Phone Number Section with Icon -->
-                        <div class="py-4 border border-blue-500 text-blue-500 font-medium rounded-xl bg-blue-50 flex items-center justify-center space-x-2">
-                          <i class="fas fa-phone-alt text-lg"></i>
-                          <span>{{ offer.user.phoneNumber }}</span>
-                        </div>
-                      
-                        <!-- Go Back Button Section with Enhanced Styling -->
-                        <button 
-                          (click)="closePetDetails()" 
-                          class="py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                          Go Back
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-          }
+      <div class="adoption-offer-list card-view grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @if (adoptionOffers.length === 0) {
+        <div class="no-offers text-center py-12 bg-white rounded-xl shadow-md">
+          <p class="text-gray-600 text-lg">No adoption offers available at the moment. Check back later!</p>
         </div>
+        }
+        @for (offer of adoptionOffers; track offer.id) {
+        <div
+          class="offer-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+          <div class="card-image relative">
+            @if(offer.image){
+            <img [src]="'data:image/jpeg;base64,' + offer.image" alt="{{ offer.pet.name }}"
+              class="w-full h-full object-cover object-center" />
+            }
+            <div
+              class="status-overlay absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full"
+              [ngClass]="getStatusClass(offer.status)">
+              {{ offer.status }}
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+              <h2 class="text-xl font-bold text-white">{{ offer.pet.name }}</h2>
+            </div>
+          </div>
+          <div class="offer-details p-5">
+            <div class="pet-tags flex flex-wrap gap-2 mb-3">
+              <span class="bg-purple-100 text-purple-600 text-xs px-3 py-1 rounded-full">{{ offer.pet.breed }}</span>
+              <span class="bg-blue-100 text-blue-600 text-xs px-3 py-1 rounded-full">{{ offer.pet.sex }}</span>
+              <span class="bg-pink-100 text-pink-600 text-xs px-3 py-1 rounded-full">{{ offer.pet.age }} {{
+                offer.pet.age === 1 ? 'year' : 'years' }}</span>
+            </div>
+            <div class="location flex items-center text-gray-500 text-sm mb-4">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              {{ offer.location }}
+            </div>
+            <div class="offer-actions flex gap-2">
+              @if(offer.id){
+              <button (click)="showPetDetails(offer.id)"
+                class="view-more-btn bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 transition-colors flex-1 flex items-center justify-center">
+                View More
+              </button>
+
+              }
+            </div>
+          </div>
+        </div>
+
+        @if(openPetId === offer.id) {
+        <!-- Pet Details Modal -->
+        <div class="fixed inset-0 z-50 overflow-y-auto bg-white">
+          <div class="sticky top-0 z-10 bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+              <h2 class="text-xl font-semibold">Pet Details</h2>
+              <button (click)="openPetId = null" class="text-gray-500 hover:text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col lg:flex-row gap-12">
+              <div class="w-full lg:w-1/2">
+                <div class="mb-6 bg-gray-50 rounded-2xl p-8 flex items-center justify-center">
+                  <img [src]="'data:image/jpeg;base64,' + offer.image" alt="{{ offer.pet.name }}"
+                    class="max-h-96 object-contain" />
+                </div>
+              </div>
+
+              <div class="w-full lg:w-1/2">
+                <div class="flex justify-between items-center mb-4">
+                  <h1 class="text-3xl font-bold">{{ offer.pet.name }}</h1>
+                  <span class="bg-pink-500 text-white text-xs px-3 py-1 rounded-full">Available</span>
+                </div>
+
+                <div class="mb-8">
+                  <h3 class="text-xl font-semibold mb-4">Details</h3>
+                  <div class="grid grid-cols-1 gap-4">
+                    <div class="flex justify-between py-3 border-b border-gray-100">
+                      <span class="text-gray-500 font-medium">Age:</span>
+                      <span class="font-medium">{{ offer.pet.age }}</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-gray-100">
+                      <span class="text-gray-500 font-medium">Breed:</span>
+                      <span class="font-medium">{{ offer.pet.breed }}</span>
+                    </div>
+                    <div class="flex justify-between py-3 border-b border-gray-100">
+                      <span class="text-gray-500 font-medium">Gender:</span>
+                      <span class="font-medium">{{ offer.pet.sex }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-8">
+                  <h3 class="text-xl font-semibold mb-4">Description</h3>
+                  <p class="text-gray-600">{{ offer.description }}</p>
+                </div>
+
+                <div class="mb-8">
+                  <h3 class="text-xl font-semibold mb-4">Location</h3>
+                  <div class="flex items-center">
+                    <p class="text-gray-600">{{ offer.location }}</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <!-- Phone Number Section with Icon -->
+                  <div
+                    class="py-4 border border-blue-500 text-blue-500 font-medium rounded-xl bg-blue-50 flex items-center justify-center space-x-2">
+                    <i class="fas fa-phone-alt text-lg"></i>
+                    <span>{{ offer.user?.phoneNumber || 'No phone number available' }}</span>
+                  </div>
+
+                  <!-- Go Back Button Section with Enhanced Styling -->
+                  <button (click)="closePetDetails()"
+                    class="py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Go Back
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+        }
+      </div>
       }
     </div>
   </div>
 
   <!-- Post Adoption Modal -->
   @if (showPostModal) {
-    <div class="fixed inset-0 bg-gray-200/60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-0 flex overflow-hidden">
-        <!-- Left side image -->
-        <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url('/ressources/twocats.jpg');"></div>
+  <div class="fixed inset-0 bg-gray-200/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-0 flex overflow-hidden">
+      <!-- Left side image -->
+      <div class="hidden md:block w-1/2 bg-cover bg-center" style="background-image: url('/ressources/twocats.jpg');">
+      </div>
 
-        <!-- Right side form -->
-        <div class="w-full md:w-1/2 p-8">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-purple-600">Post an Adoption Offer</h2>
-            <button class="text-gray-500 hover:text-gray-700" (click)="closePostModal()">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      <!-- Right side form -->
+      <div class="w-full md:w-1/2 p-8">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-purple-600">Post an Adoption Offer</h2>
+          <button class="text-gray-500 hover:text-gray-700" (click)="closePostModal()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form [formGroup]="adoptionForm" (ngSubmit)="submitAdoptionOffer()" class="space-y-6">
+          <div class="form-group">
+            <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+            <input type="text" id="title" formControlName="title"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+            <div *ngIf="adoptionForm.get('title')?.touched && adoptionForm.get('title')?.invalid"
+              class="text-red-500 text-sm mt-1">
+              Title is required
+            </div>
           </div>
 
-          <form [formGroup]="adoptionForm" (ngSubmit)="submitAdoptionOffer()" class="space-y-4">
-            <!-- Title + Date -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="title" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Title">
-              <input formControlName="date" type="date" class="bg-gray-100 rounded-lg px-4 py-2 w-full">
-            </div>
+          <div class="form-group">
+            <label for="petName" class="block text-sm font-medium text-gray-700">Pet Name</label>
+            <input type="text" id="petName" formControlName="petName"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+          </div>
 
-            <!-- Pet: Name + Breed -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="petName" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Pet Name">
-              <input formControlName="breed" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Breed">
-            </div>
+          <div class="form-group">
+            <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+            <input type="number" id="age" formControlName="age"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+          </div>
 
-            <!-- Pet: Age + Sex -->
-            <div class="grid grid-cols-2 gap-4">
-              <input formControlName="age" type="number" min="0" max="20" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Age">
-              <input formControlName="sex" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Sex">
-            </div>
-            
-            <!-- Location -->
-            <div>
-              <input formControlName="location" type="text" class="bg-gray-100 rounded-lg px-4 py-2 w-full" placeholder="Location">
-            </div>
+          <div class="form-group">
+            <label for="breed" class="block text-sm font-medium text-gray-700">Breed</label>
+            <input type="text" id="breed" formControlName="breed"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+          </div>
 
-            <!-- Description -->
-            <textarea formControlName="description" rows="3" class="w-full bg-gray-100 rounded-lg px-4 py-2" placeholder="Describe the pet..."></textarea>
+          <div class="form-group">
+            <label for="sex" class="block text-sm font-medium text-gray-700">Sex</label>
+            <select id="sex" formControlName="sex"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
 
-            <!-- Upload -->
-            <div>
-              <label class="block text-sm font-medium text-gray-600 mb-1">Upload Photo</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-pink-500 transition-colors">
-                <input type="file" accept="image/*" class="hidden" id="photoInput" (change)="onFileSelected($event)">
-                <label for="photoInput" class="cursor-pointer text-sm text-gray-400">Click to upload or drag image</label>
-              </div>
-            </div>
+          <div class="form-group">
+            <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+            <input type="text" id="location" formControlName="location"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+          </div>
 
-            <button type="submit" class="w-full bg-pink-500 text-white py-2 rounded-full font-semibold hover:bg-pink-600">Submit</button>
-          </form>
-        </div>
+          <div class="form-group">
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description" formControlName="description"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"></textarea>
+          </div>
+
+          <!-- Add image upload control -->
+          <div class="form-group">
+            <label for="image" class="block text-sm font-medium text-gray-700">Pet Image</label>
+            <input type="file" id="image" (change)="onFileSelected($event)" accept="image/*" class="mt-1 block w-full">
+          </div>
+
+          <!-- Submit button with proper styling and disabled state -->
+          <button type="submit"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
+            Submit
+          </button>
+        </form>
       </div>
     </div>
+  </div>
   }
 </div>

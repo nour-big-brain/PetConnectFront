@@ -1,8 +1,16 @@
-import { Post } from "./post";
 import { User } from "./user";
 
-export interface Product extends Post{
+export type Status_Product = 'available' | 'sold';
+
+export interface Product {
   id?: number;
-  status: string;
-  price : DoubleRange,
-  }
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  status: Status_Product;
+  price: number;
+  validated?: boolean;
+  image?: string | null;
+  user?: User;
+}
